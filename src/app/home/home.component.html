@@ -1,0 +1,16 @@
+    <nav>
+        <a class = "name">Alden Haase</a>
+        <a class = "name_mobile">AH</a>
+        <a href="https://www.linkedin.com/in/aldenhaase"><img class = "socialImages" src="assets/LinkedIn-Logos/LI-In-Bug.png"></a>
+        <a href="https://github.com/aldenhaase"><img class = "socialImages" src="assets/github-mark/github-mark.png"></a>
+    </nav>
+    <div id = "box">
+        <p id = "boxTitle">PROJECTS</p>
+        <div *ngFor="let menuItem of menuItems; index as i">
+            <div [class]="'_menuItem' + (i+1) + ' ' + menuItem.type">
+                <a routerLink={{menuItem.route}}>
+                    {{menuItem.displayName}}
+                </a>
+            </div>
+        </div>
+    </div>
