@@ -11,7 +11,7 @@ export class HomeComponent implements OnInit {
   menuItems: links[] = [
       {route: "lystr",    displayName: "- LYSTR -",        type: "project"},
       {route: "keyboard", displayName: "- USB KEYBOARD -", type: "project"},
-      {route: "map",      displayName: "- MAPS WEB APP -", type: "project"},
+      {route: "map",      displayName: "- MAPS FOR BIRDS -", type: "project"},
       {route: "",         displayName: "",                 type: "disabled"},
       {route: "",         displayName: "",                 type: "disabled"},
       {route: "",         displayName: "",                 type: "disabled"},

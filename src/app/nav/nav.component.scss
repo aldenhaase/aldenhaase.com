@@ -1,0 +1,86 @@
+@font-face {
+    font-family: 'Kanit';
+    src: url('../../assets/fonts/Kanit-Bold.ttf');
+  }
+@font-face {
+    font-family: 'Orbitron';
+    src: url('../../assets/fonts/Orbitron-VariableFont_wght.ttf');
+  }
+
+  @media only screen and (max-width: 700px){
+	.name{
+		display: none;
+	}
+	.name_mobile{
+		display: block;
+    font-size: 2em;
+    padding-left: 10%;
+    font-family: 'Orbitron';
+    
+	}
+}
+
+@media only screen and (min-width: 700px){
+	.name{
+		display: block;
+    font-size: 2em;
+	  padding-left: 10%;	
+	  font-family: 'Orbitron';
+	}
+  .name_mobile{
+	  display:none;
+  }
+}
+
+.navigationBar{
+    position: sticky;
+    top: 0;
+    padding-top: 10px;
+    background-color: white;
+}
+
+
+hr {
+    margin: 8px auto;
+    height: 0;
+    width: 90%;
+    max-height: 0;
+    font-size: 1px;
+    line-height: 0;
+    clear: both;
+    border: none;
+    border-top: 1px solid #aaaaaa;
+    border-bottom: 1px solid #ffffff;
+  }
+  nav{
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 90vw;
+      height: 35px;
+  }
+  
+  nav a{
+      color: inherit;
+      text-decoration: none;
+  
+  }
+  #socialsContainer {
+	padding-right: 10%;
+}
+
+
+.socialImage{
+  display: inline-block;
+  vertical-align: bottom;
+	margin-left:15px;
+	margin-right:15px;
+	width: 35px;
+	height: 35px;
+}
+
+.socialImage img{
+  width: 100%;
+  height: 100%;
+}
+

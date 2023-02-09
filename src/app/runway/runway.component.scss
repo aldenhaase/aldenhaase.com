@@ -1,0 +1,71 @@
+@font-face {
+    font-family: 'Kanit';
+    src: url('../../assets/fonts/Kanit-Bold.ttf');
+  }
+@font-face {
+    font-family: 'Orbitron';
+    src: url('../../assets/fonts/Orbitron-VariableFont_wght.ttf');
+  }
+:host {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+}
+
+#strip {
+    min-width: 320px;
+    max-width: 800px;
+    width:80%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    text-align: justify;
+}
+
+#strip ::ng-deep img{
+    max-width:100%;
+}
+
+#strip ::ng-deep .doubleWideImg{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+}
+#strip ::ng-deep .doubleWideImg img{
+    max-width: 45%;
+}
+
+#strip ::ng-deep .gif video{
+    width: 100%;
+}
+
+#strip ::ng-deep .gif{
+    margin: auto;
+    width: 80%;
+}
+#strip ::ng-deep .title{
+    font-family: Orbitron;
+    text-align: center;
+}
+#strip ::ng-deep .table{
+    table, th, td {
+        border: 1px solid black;
+        border-collapse: collapse;
+    }
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+}
+
+
+.click-zoom img {
+  transition: transform 0.25s ease;
+  cursor: zoom-in;
+}
+
+.click-zoom input[type=checkbox]:checked~img {
+  transform: scale(2.0);
+  cursor: zoom-out;
+}

@@ -9,6 +9,8 @@ import { MapComponent } from './map/map.component';
 import { LystrComponent } from './lystr/lystr.component';
 import { ResumeComponent } from './resume/resume.component';
 import { AboutComponent } from './about/about.component';
+import { NavComponent } from './nav/nav.component';
+import { RunwayComponent } from './runway/runway.component';
 
 @NgModule({
   declarations: [
@@ -18,7 +20,9 @@ import { AboutComponent } from './about/about.component';
     MapComponent,
     LystrComponent,
     ResumeComponent,
-    AboutComponent
+    AboutComponent,
+    NavComponent,
+    RunwayComponent
   ],
   imports: [
     BrowserModule,

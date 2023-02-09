@@ -1,1 +1,130 @@
-<p>keyboard works!</p>
+<app-nav></app-nav>
+<app-runway>
+  <div class="title">
+    <h1>A Better Keyboard</h1>
+  </div>
+  <div class="gif">
+    <video autoplay loop muted playsinline src="assets/keyboard/gif/rotatingKB.mp4" alt="video of keyboard spinning"></video>
+  </div>
+  <p>Why is the standard keyboard space-bar so wide? My thumbs are just as capable as my fingers, they articulate just the same. Yet, the two of them have been assigned a singular purpose, to add space. The goal of this project was to implement all of the little things I wished were different about my keyboard. I wanted a keyboard which freed my thumbs from the monotony and allowed them greater purpose beyond adding space. I wanted it to be ortholinear to reduce strain. I wanted it to be layered to reduce the amount of finger movement. I wanted it to take up far less space on my desk. I wanted RGB.</p>
+  <h2>Electronic Design</h2>
+  <img src="assets/keyboard/schematic/pcb_trace_bottom_1200.jpg">
+  <p>Since I wanted to have backlit keys, and a good clicky feel, I found myself needing to use through-hole switches.Which meant I couldn&rsquo;t mount any large components on the back side of the board. I could have made room for these larger components by making the board taller, or wider, but this would have violated one of my primary design requirements. So, I decided to do something new and implement what I call the bi-plane design. Two PCB&rsquo;s stacked on top of each other with connections at the origin of each signal. </p>
+  <img src="assets/keyboard/schematic/pcb_trace_top_1200.jpg">
+  <p>Another oddity in this design is the integration of an entire pre-assembled development board onto the PCB. The motivation behind this decision was the desire to minimize hardware debugging at all costs. I didn&rsquo;t have enough experience to be confident that novel power/timing circuity of my design, would work on the first try, and this didn&rsquo;t seem like the time to learn. Besides, adding 3mm to the overall thickness in order to save potentially months of time, seemed like the obvious choice.</p>
+  <h2>Bill of Materials</h2>
+  <div class=table>
+    <table>
+      <thead>
+        <tr>
+          <th style="text-align:left">Description</th>
+          <th style="text-align:center">SKU</th>
+          <th style="text-align:center">Distributor</th>
+          <th style="text-align:right">#</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="text-align:left">RES 4.7K OHM</td>
+          <td style="text-align:center">1276-1001-1-ND</td>
+          <td style="text-align:center">Digi-Key</td>
+          <td style="text-align:right">50</td>
+        </tr>
+        <tr>
+          <td style="text-align:left">ADDRESSABLE LED</td>
+          <td style="text-align:center">160-2263-1-ND</td>
+          <td style="text-align:center">Digi-Key</td>
+          <td style="text-align:right">50</td>
+        </tr>
+        <tr>
+          <td style="text-align:left">CAP CER 0.1UF</td>
+          <td style="text-align:center">1276-1001-1-ND</td>
+          <td style="text-align:center">Digi-Key</td>
+          <td style="text-align:right">50</td>
+        </tr>
+        <tr>
+          <td style="text-align:left">PISO SHIFT REG</td>
+          <td style="text-align:center">SN74LS674DW</td>
+          <td style="text-align:center">TI</td>
+          <td style="text-align:right">3</td>
+        </tr>
+        <tr>
+          <td style="text-align:left">ITSYBITSY 5v</td>
+          <td style="text-align:center">3677</td>
+          <td style="text-align:center">Adafruit</td>
+          <td style="text-align:right">1</td>
+        </tr>
+        <tr>
+          <td style="text-align:left">RGB SWITCHES</td>
+          <td style="text-align:center">MX1A-E1NB</td>
+          <td style="text-align:center">MechanicalKeyboards</td>
+          <td style="text-align:right">50</td>
+        </tr>
+        <tr>
+          <td style="text-align:left">AVIATOR USB CABLE</td>
+          <td style="text-align:center">N/A</td>
+          <td style="text-align:center">N/A</td>
+          <td style="text-align:right">1</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <h2>Gerber Files</h2>
+  <p>
+    <a href="assets/keyboard/gerber/kbv2_gerber.zip" rel="">Download Gerber Files</a>
+  </p>
+  <h2>Software Design</h2>
+  <p>
+    <a href="https://github.com/aldenhaase/USB_Keyboard" target="_blank" rel="noopener noreffer ">Source Code</a>
+  </p>
+  <h4>Core USB Functionality</h4>
+  <p>When I originally started researching this project I came across similar work done by <a href="https://github.com/kmani314/ATMega32u4-HID-Keyboard" target="_blank" rel="noopener noreffer ">Krishna Mani</a> which implemented the core USB functionality I needed for the 32u4 board. Their repository goes into some detail on how the USB section works, and also links to other extremely helpful sources, so I wont repeat that information here. However, I will clarify one thing that caused me confusion. The CPU in the 32u4 is connected to the USB device via dual port FIFO RAM. This is why you&rsquo;ll see the same memory location &ndash; i.e. UEDATX &ndash; being written to consecutively, seemingly clobbering the previously written data. </p>
+  <h4>Reading Key Data</h4>
+  <p>This keyboard is based on PISO shift registers rather than a scanning matrix. Given the relatively slow clock of the CPU, we do not have to worry about timing in regards to the register&rsquo;s functions.The maximum transition period for the shift register is 45 ns, and the best case scenario for the 32u4 is 62.5 ns per operation. So, there is no worry of data loss between switching the registers from input to output. Each of the three registers have their control lines tied together so that they can be controlled in lock step by a single GPIO pin. The registers read in the current state of the keyboard and then that data is shifted into the CPU. The current state and previous states are compared and, in most cases, if change is detected, the appropriate key is added to the HID report and the LED animation is triggered. If, however, the key is a layer shift key, nothing is sent to the host and instead the internal key mapping is adjusted appropriately and the LED base color is changed so that the user knows that a layer change has occurred.</p>
+  <h4>LED Timing</h4>
+  <p>The 32u4 is just barely fast enough to keep up with the timing requirements of the LEDs used in this project. The LED <a href="https://media.digikey.com/pdf/Data%20Sheets/Lite-On%20PDFs/LTST-E263CEGBK_RevC_7-6-19.pdf" target="_blank" rel="noopener noreffer ">datasheet</a> states the required intervals are 300ns and 900ns, with an allowance of (+-) 80ns. With a single cycle of the 32u4 taking 62.5 ns, the processor only has time to execute 4.8 instructions during the shorter of the two intervals. Using a logic analyzer proved invaluable when writing and debugging this code, because it meant I did not have to inspect the generated assembly and calculate the timing by hand. Also, given that every part of this project was unproven debugging was even more difficult than usual due to the potential for both hardware and software bugs to occur at the same time. </p>
+  <p>The following section shows simplified examples of the problem faced and measurements of the timing.</p>
+  <p>In this first example, we start off simple and try to send 10 zeros.</p>
+  <img src="assets/keyboard/code/zeros_code.png">
+  <p>This works perfectly fine and we see that the resulting output is within the timing requirements.</p>
+  <img src="assets/keyboard/code/zeros_analyzer.png">
+  <p>Next, we will try and send 10 ones.</p>
+  <img src="assets/keyboard/code/ones_problem_code.png">
+  <p>This does not work. Even without any delay, the signal stays low for far too long.</p>
+  <img src="assets/keyboard/code/ones_problem_analyzer.png">
+  <p>Here we see a solution to the problem. Each time a for-loop executes, the conditional has to be checked and the counter has to be incremented. This extra overhead was taking longer than the 300ns we had to work with. The solution I came up with was to adjust when this overhead occurred.</p>
+  <img src="assets/keyboard/code/ones_solution_code.png">
+  <p>With the overhead moved into the middle of the loop, the timing is now compliant with the requirements. In the full implementation, this code has to have another conditional added in order to adjust when the overhead occurs depending on what value needs to be sent.</p>
+  <img src="assets/keyboard/code/ones_solution_analyzer.png">
+  <h3>Assembly Process</h3>
+  <p>The assembly process for most of the components was relatively common, except for the implementation of the previously mentioned bi-plane design and the flatmounting of the development board.</p>
+  <h3>The Hair Follicle Technique</h3>
+  <p>Although not complicated, the Hair Follicle Technique was an interesting procedure and the best way to implement the bi-plane design.</p>
+  <p>First, long strands of wire were soldered to the top board.</p>
+  <img src="assets/keyboard/assembly/spaghetti_tech.jpg">
+  <p>Then, these long wires were threaded into the bottom board one row at a time.</p>
+  <p>The board was slowly tilted and lowered, while more wires were threaded.</p>
+  <div class="doubleWideImg">
+    <img src="assets/keyboard/assembly/spaghetti_tech_assembly_1.jpg">
+    <img src="assets/keyboard/assembly/spaghetti_tech_assembly_2.jpg">
+  </div>
+  <h3>Flatmount</h3>
+  <p>Although the flat-mounted development board idea worked really well in the end, it took a bit of experimenting to get a good connections on all of the pads. Strong surface tension kept me from applying solder through the header holes, and a slight curve in the board kept me from first applying solder balls to the pads and then attaching the board. What worked in the end was using anchoring pins to facilitate the connection between the pads and the development board.</p>
+  <p>A small blob of solder was added to the end of each pin before being placed through the header holes. Then the pin was heated and more solder was added, ensuring a secure connection to both boards.</p>
+  <img src="assets/keyboard/assembly/mcu_mounting_spikes.jpg">
+  <p>This experimentation also led to a perfect solution to a previously unaddressed problem. Due to the development board being sandwiched between the two PCBs, I did not have any access to the pins after assembly for further debugging and software modifications. However, bending the anchoring pins over and wrapping them in a little heat shrink created perfect programming hooks.</p>
+  <div class="doubleWideImg">
+    <img src="assets/keyboard/assembly/pin_hooks.jpg">
+    <img src="assets/keyboard/assembly/programming_assembled.jpg">
+  </div>
+  <h2>Retrospective</h2>
+  <p>If I were to do this project again, there are a few major changes I would make</p>
+  <p>Firstly, I would not use 0402 components. They are just too small to handle and I had plenty of room to use a larger package. Here is a picture of the resistors next to some Morton salt crystals. In order to work with these components I needed to use a USB microscope in order to place them.</p>
+  <p>Secondly, I would change which GPIO pins the shift registers are connected to. It is important to note that consecutive GPIO pins are not necessarily connected to consecutive memory locations. Because of this, when data is read from the shift registers it takes three operations. A bit mask is used to check each bit independently. A much more elegant solution would be to use GPIO pins which are connected to consecutive memory so that a single bit mask could be used to read all three shift registers at once.</p>
+  <div class="gif">
+    <video autoplay loop muted playsinline src="assets/keyboard/gif/illuminatingKB.mp4" alt="video of keyboard illuminating" class="gif"></video>
+  </div>
+  <div class="title">
+    <h2>-Alden</h2>
+  </div>
+</app-runway>
