@@ -45,12 +45,11 @@
     width: 100%;
   }
   #boxTitle p{
-    padding-top: 1.5vh;
+    padding-top: 1.7vh;
     margin: 0;
   }
   #box{
-    height: 600px;
-    max-height: 55vh;
+    height: 55vh;
     width: 600px;
     grid-template-columns: 10% 90%;
     grid-template-rows: repeat(10, 1fr);
