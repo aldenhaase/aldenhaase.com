@@ -2,10 +2,14 @@
 <app-runway>
   <div class="title">
     <h1>
-      <a href="https://lystr.app" target="_blank">
       Lystr
-    </a>
+      <fa-icon [ngStyle]="{'cursor':'pointer'}" [icon]="faAngleDown" (click)="menuActivated = !menuActivated"></fa-icon>
     </h1>
+  </div>
+  <div *ngIf="menuActivated" class = "dropDown" >
+    <p class = "dropDownItem"><a href="https://lystr.app" target="_blank">-Register-</a></p>
+    <hr>
+    <p class = "dropDownItem"><a href="https://github.com/aldenhaase/lystr" target="_blank">-Source Code-</a></p>
   </div>
 
 <blockquote>
@@ -13,43 +17,45 @@
   It allows users to collaboratively and synchronously generate a list from any device's browser.
   Gone are the days of combing through your messages to see what everybody else needed from the store,
   restaurant, coffee shop, etc. Registration is free and does not require email or other verification.
-<br>
-<br>
+    <br>
+    <br>
   Lystr is still in active development with many new features on the way. However, the design principle
   which will guide future developments is the negation of that which guides the Swiss Army’s knife design
   division. This tool will be good for collaboratively creating lists and that is all. 
-  </p>
+</p>
 </blockquote>
-<p><a href="https://github.com/aldenhaase/lystr" target="_blank" rel="noopener noreffer ">Source Code</a></p>
-<h2 id="the-goal">The Goal</h2>
-<p>The other goal of this project was to learn a bit of Go, a bit of system design, a bit of CI/CD and a bit of scalable cloud hosting. In order to get the most out of the
-process I started from the bottom.</p>
-<h3 id="go">Go</h3>
-<p>I won&rsquo;t repeat the praise commonly given to Go, and I don&rsquo;t really have anything new to add. It is a powerful language and a pleasure to work with. I will definitely use it
-in future projects. I used <em>Practical Go</em> by Amit Saha as a reference and guide while building the backend for this project.</p>
-<h3 id="system-design">System Design</h3>
-<dl>
-<dt><strong>Architecture</strong></dt>
-<dt>Since I decided to use Google&rsquo;s App Engine and Datastore for this project, a lot of the system design was abstracted away. However, what was left was still a lot to handle. At the time of</dt>
-<dt>starting this project I had no prior experience building a system like this, and so most of my process was trial and error.</dt>
-<dd>
-<p>What I ended up with was an Angular front-end, an Express back-end &ndash; running Angular Universal for
-SSR &ndash; and a second Go based back-end handling API requests. The servers are running on App Engine and using Datastore as a DB solution.</p>
-</dd>
-</dl>
-<p><strong>Data</strong>
-This project uses Datastore which is a NoSQl database provided by Google. This allowed for fast implementation but was perhaps too loosely structured for learning purposes. I was able to implement a functioning database without giving it much thought, which
-I imagine will come back to bite me as the application grows. Perhaps if I had used an SQL database I would have been forced to think about these things more.</p>
-<p><strong>Security</strong>
-The grocery list of me and my partner isn&rsquo;t the most sensitive data in the world. However, for the sake of learning I pretended it was somewhat sensitive. This system hashed passwords before they leave the client, and then
-again on the server. The server side encryption is done using Go&rsquo;s bcrypt implementation. Each request for sensitive data is first authenticated and authorized before being processed. In regards to resource security,
-the number of accounts created is limited per IP address with each registration attempt first requiring a registration cookie. Further, there is a datacap implemented on a per list basis.</p>
-<h3 id="cicd">CI/CD</h3>
-<p>This project is still active and putting in the time upfront to build out a CI/CD pipeline has proved to be extremely helpful. The pipeline consists of a local dockerized build option, a full remote build option using Cloud Build, and a deployment option.
-Further, there is a build/deploy trigger set up to watch the main branch of the repository for changes. In addition, there is of course testing which is run before each build. Testing utilized Angular&rsquo;s built in testing framework, Go&rsquo;s built in unit testing, and
-additional integration testing via Postman&rsquo;s Newman. This part of the project gave me a greater respect for the necessity of quality testing infrastructure and the importance of high quality tests, in regards to CI/CD. They&rsquo;re not the highest stakes in the world, but
-having my partner ask why we can&rsquo;t access our grocery list definitely puts the pressure on to not to break the production branch. Having a good testing/deployment pipeline in place gave me confidence in implementing changes.</p>
-<h3 id="scalability">Scalability</h3>
-<p>I don&rsquo;t have much to say in regard to scalability. It is all abstracted away using Google&rsquo;s products and I haven&rsquo;t really given it a second thought. Except to put checks in place to limit scalability, in order to assure that my bill wouldn&rsquo;t also be infinitely scalable.</p>
+
+
+<h2>The Goal</h2>
+<p>The goal of this project was not just to build the Facebook of grocery list creation. I also needed
+  and excuse to learn new things. In particular I set out to learn about three thing. I wanted learn about 
+  building a CI/CD pipeline, building a complete application, and working with cloud compute and hosting.
+  Prior to this project I had worked with all of these components individualy but I had yet to cook up the
+  entire meal by myself. I also took the opportunity to dabble in GO.
+</p>
+
+<h2>The Technologies
+  <fa-icon class ="techStack" [icon]="faAngular"></fa-icon>
+  <fa-icon class ="techStack" [icon]="faGolang"></fa-icon>
+  <fa-icon class ="techStack" [icon]="faDocker"></fa-icon>
+  <fa-icon class ="techStack" [icon]="faCloud"></fa-icon>
+  <fa-icon class ="techStack" [icon]="faGitHub"></fa-icon>
+</h2>
+
+<p>
+  This project used the ADAGE stack -- App Engine, Datastore, Angular, Go, Express.
+</p>
+
+<h2>The Architecture</h2>
+<p>This application is built using a three tier architecture. The front-end is served from a basic Express
+    server running in Google's App Engine. The API is handled by a custom GO server, running as a serperate App Engine
+    service. All data is stored in Google's datastore. 
+</p>
+
+<h3>The Database</h3>
+<p>Datastore is a NOSQL database. Here is the database model. 
+</p>
+<img src="assets/diagrams/ERdiagram.drawio.svg">
+
 <div class="title">-Alden</div>
 </app-runway>

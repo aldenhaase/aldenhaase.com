@@ -50,6 +50,9 @@
 }
 #strip ::ng-deep .table{
     table, th, td {
+        table-layout: fixed;
+        width: 100%;
+        word-wrap:break-word;
         border: 1px solid black;
         border-collapse: collapse;
     }

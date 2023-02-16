@@ -1,0 +1,29 @@
+
+
+.dropDown{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    border: thin solid black;
+    width:60%;
+    margin: auto;
+    font-family: Orbitron;
+}
+
+hr {
+    margin: 8px auto;
+    height: 0;
+    width: 90%;
+    max-height: 0;
+    font-size: 1px;
+    line-height: 0;
+    clear: both;
+    border: none;
+    border-top: 1px solid #aaaaaa;
+    border-bottom: 1px solid #ffffff;
+  }
+
+  .techStack{
+    margin-left: 0.5em;
+  }
