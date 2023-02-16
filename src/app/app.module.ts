@@ -11,6 +11,8 @@ import { ResumeComponent } from './resume/resume.component';
 import { AboutComponent } from './about/about.component';
 import { NavComponent } from './nav/nav.component';
 import { RunwayComponent } from './runway/runway.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+
 
 @NgModule({
   declarations: [
@@ -26,7 +28,10 @@ import { RunwayComponent } from './runway/runway.component';
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule
+    AppRoutingModule,
+    BrowserAnimationsModule
+  ],
+  exports: [
   ],
   providers: [],
   bootstrap: [AppComponent]
