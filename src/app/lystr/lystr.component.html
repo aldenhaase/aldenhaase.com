@@ -15,8 +15,8 @@
 <blockquote>
 <p>Lystr is a collaborative list building web-app designed to put an end to forgotten eggs.
   It allows users to collaboratively and synchronously generate a list from any device's browser.
-  Gone are the days of combing through your messages to see what everybody else needed from the store,
-  restaurant, coffee shop, etc. Registration is free and does not require email or other verification.
+  Gone are the days of combing through your messages to see what everybody needed from the store.
+   Registration is free and does not require email or other verification.
     <br>
     <br>
   Lystr is still in active development with many new features on the way. However, the design principle
@@ -49,13 +49,58 @@
 <h2>The Architecture</h2>
 <p>This application is built using a three tier architecture. The front-end is served from a basic Express
     server running in Google's App Engine. The API is handled by a custom GO server, running as a serperate App Engine
-    service. All data is stored in Google's datastore. 
+    service. All data is stored in Google's Datastore. 
 </p>
 
-<h3>The Database</h3>
-<p>Datastore is a NOSQL database. Here is the database model. 
-</p>
-<img src="assets/diagrams/ERdiagram.drawio.svg">
+<h2>The CI/CD Pipeline</h2>
+<p>
+  In order to facilitate rapid prototyping and new feature roll out
+  – and since it was one of the learning goals – I spent the time up front to create a CI/CD pipeline for the project.
+   This pipeline utilized Docker, Google’s Cloud Build, Github, Datastore’s emulator, and the Angular CLI tools, 
+   all glued together with Python and Bash scripts.<br>
+Since I am the only developer working on this project, containerization would not have been required for multi system
+ compatibility, except for the improved integration with Cloud Build. Containerizing the build and test systems meant 
+ that I could easily reuse the same scripts for both environments. Cloud Build is hooked into the Github repository and 
+ automatically builds and tests the project each time Main is updated. Further, the project is automatically deployed to 
+ App Engine each time there is a new release.<br>
+During development I am able to hot reload both the front end via the Angular CLI tools, as well as the backend via the 
+Google Cloud CLI development server. In order to mirror the changes made on the host machine, into the container, a couple 
+of volumes are created. In order to access the application running within the container, the proper ports are published.<br>
+Having this system in place has been hugely valuable and hindsight has worked its magic. However, while I spent far longer 
+than anticipated building the system, and not working on the product, I certainly felt the urge to jump into production and 
+skip the thing all together. It has served as yet another example of how important process, adherence to quality, and patience 
+are when building large systems. Had I skipped this step, the development process would have quickly become a mess and the 
+product would have followed suit.
 
+</p>
+
+<h2>The Database</h2>
+<p>Lystr is built using a simple data model. User records contain an array of list keys and lists contain an array of item keys.
+   By maintaining the list as a separate entity, we are able to easily implement collaboration between multiple clients. 
+   In order to add a collaborator to a list, we simply add the list’s key to the new collaborator’s user record. 
+   Datastore provides the transaction API which guarantees atomicity for read/write cycles. 
+   The application uses a write only interface. 
+   When a user deletes an item, the item remains in the database and is simply removed from the list’s item array. 
+   When the user adds an item, the database is queried to check for existing items by value and username attributes. 
+   This is advantageous because it allows the app to be more performant and also allows for the addition of an item 
+   customization feature in the future. The performance increase is due to the nature of the app's primary use case of 
+   grocery list creation. Most people are creatures of habit and will often select from a small handful of favorite 
+   items when they go shopping. This repetition means that it wouldn’t make sense to delete and recreate the same 
+   item entity every time the user adds it to their list. This design decision is also made with the future of Lystr in mind.
+   In particular, the extension of list entities to include attributes like price, favorite supplier, linked recipes etc.
+   These additional attributes will be used for planned features such as adding items by meal, rather than individually,
+   and the creation of an itinerary of stores which must be visited in order to get all items, optimizing for things such
+   as fewest stops, lowest price, target stops, etc.
+</p>
+<br>
+<br>
+<img src="assets/diagrams/ERdiagram.svg">
+<br>
+<br>
+<h2>The Security</h2>
+<p>
+
+</p>
+<h2>The Future</h2>
 <div class="title">-Alden</div>
 </app-runway>

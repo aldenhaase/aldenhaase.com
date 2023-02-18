@@ -23,32 +23,33 @@
     text-align: justify;
 }
 
-#strip ::ng-deep img{
+#strip ::ng-deep{
+img{
     max-width:100%;
 }
 
-#strip ::ng-deep .doubleWideImg{
+.doubleWideImg{
     display: flex;
     flex-direction: row;
     justify-content: space-around;
 }
-#strip ::ng-deep .doubleWideImg img{
+.doubleWideImg img{
     max-width: 45%;
 }
 
-#strip ::ng-deep .gif video{
+.gif video{
     width: 100%;
 }
 
-#strip ::ng-deep .gif{
+.gif{
     margin: auto;
     width: 80%;
 }
-#strip ::ng-deep .title{
+.title{
     font-family: Orbitron;
     text-align: center;
 }
-#strip ::ng-deep .table{
+.table{
     table, th, td {
         table-layout: fixed;
         width: 100%;
@@ -62,13 +63,14 @@
     justify-content: space-between;
 }
 
-
-.click-zoom img {
-  transition: transform 0.25s ease;
-  cursor: zoom-in;
+.dropDown{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    border: thin solid black;
+    width:60%;
+    margin: auto;
+    font-family: Orbitron;
 }
-
-.click-zoom input[type=checkbox]:checked~img {
-  transform: scale(2.0);
-  cursor: zoom-out;
 }
