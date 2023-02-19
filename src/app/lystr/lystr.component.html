@@ -31,7 +31,7 @@
   and excuse to learn new things. In particular I set out to learn about three thing. I wanted learn about 
   building a CI/CD pipeline, building a complete application, and working with cloud compute and hosting.
   Prior to this project I had worked with all of these components individualy but I had yet to cook up the
-  entire meal by myself. I also took the opportunity to dabble in GO.
+  entire meal by myself. I also took the opportunity to dabble in Go.
 </p>
 
 <h2>The Technologies</h2>
@@ -48,7 +48,7 @@
 
 <h2>The Architecture</h2>
 <p>This application is built using a three tier architecture. The front-end is served from a basic Express
-    server running in Google's App Engine. The API is handled by a custom GO server, running as a serperate App Engine
+    server running in Google's App Engine. The API is handled by a custom Go server, running as a serperate App Engine
     service. All data is stored in Google's Datastore. 
 </p>
 
@@ -99,8 +99,27 @@ product would have followed suit.
 <br>
 <h2>The Security</h2>
 <p>
-
+  The contents of my friend’s and family’s grocery lists are not exactly high value targets for miscreants but it was a 
+  better learning opportunity to pretend that this information was at least worth a few pokes and prods. To this end, I 
+  implemented some basic security measures. Passwords are hashed before leaving the client and then again before being stored. 
+  The hashing is done using the standard Go implementation of Bcrypt. Each protected endpoint is secured using session cookies. 
+  Further, the server stops my friends from creating hundreds of accounts with silly names by requiring a registration cookie, 
+  and tying this registration cookie to the client’s IP address. This measure can of course be thwarted in many ways but it 
+  makes it less fun. Further, all endpoints have a message body limit set in order to stop any single account from spamming 
+  millions of items resulting in a giant bill from Google. I am far from a security expert and will recommend against making 
+  a list of  your bank passwords.
 </p>
 <h2>The Future</h2>
-<div class="title">-Alden</div>
+<p>
+  There are many planned improvements and new features for Lystr, but there are two big ones. 
+  The previously mentioned recipe and store based classification of list items is the next big change in the works. 
+  Being able to add items by meal, and have the application automatically generate a shopping itinerary, will make 
+  the app stand out from other similar products.<br>
+  Secondarily, as much as I try, it is clear that I am not a UI designer. Lystr will benefit greatly from a short design 
+  consultation. In the same vein, the application is relatively user friendly when things work, however there is a lack 
+  of tool tips and helpful error messages. <br> 
+  With these changes, the application will be able to graduate from a learning opportunity and into a MVP.
+
+</p>
+<div class="signature">-Alden</div>
 </app-runway>
