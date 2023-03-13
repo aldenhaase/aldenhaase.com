@@ -1,0 +1,156 @@
+<app-nav></app-nav>
+<app-runway>
+    <div class="title">
+        <h1>
+          Vision Based MIDI Drum Machine
+          <fa-icon [ngStyle]="{'cursor':'pointer'}" [icon]="faAngleDown" (click)="menuActivated = !menuActivated"></fa-icon>
+        </h1>
+      </div>
+      <div *ngIf="menuActivated" class = "dropDown" >
+        <p class = "dropDownItem"><a href="https://youtube.com/shorts/hq7jz6BrLsw" target="_blank">-Short Video Demo-</a></p>
+        <hr>
+        <p class = "dropDownItem"><a href="https://github.com/aldenhaase/drums.git" target="_blank">-Source Code-</a></p>
+    </div>
+    <h2>The Goal</h2>
+        <p>
+            This project is a proof of concept. The catalyst was a desire to play drum beats, with drum sticks, in my small studio
+            apartment. Acoustic drums were, of course, not an option, electronic drum sets took up too much room, and drum pads 
+            lacked the full body participation of a set. To address this gap in the market I theorized that a system based on a single
+            board computer and camera could be used to detect drum stick motion and send regionaly mapped MIDI data to a host DAW. This 
+            would enable the user to drum on any surface, and within any space constraints. <br> As this was primarily an exploration opportunity, 
+            I did not research motion detection algorithms before hand, and tried to see what solution I could come up with on my own.
+            It is my opinion that the solution is a successful proof of concept. The implementation met the defined latency goals and shows what is 
+            possible. 
+        </p>
+    <h2>Problem Characterization</h2>
+        <p>
+            The MIDI protocol is the industry standard for digital music production. It is supported by virtually all music production
+            software, and is standardized by the USB-IF. MIDI offloads the demanding job of synthesis from the digital instrument to the work
+            station. The MIDI protocol is very simple. In order to send a note on event, all that is needed is three bytes of data.
+        </p>
+        <div class="table">
+        <table>
+            <thead>
+              <tr>
+                <th>Voice Message</th>
+                <th>Status Byte</th>
+                <th>Data Byte 1</th>
+                <th>Data Byte 2</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Note Off</td>
+                <td>8x</td>
+                <td>Key Number</td>
+                <td>Note Off Velocity</td>
+              </tr>
+              <tr>
+                <td>Note On</td>
+                <td>9x</td>
+                <td>Key Number</td>
+                <td>Note On Velocity</td>
+              </tr>
+              <tr>
+                <td>Key Pressure</td>
+                <td>Ax</td>
+                <td>Key Number</td>
+                <td>Amount of Pressure</td>
+              </tr>
+              <tr>
+                <td>Control Change</td>
+                <td>Bx</td>
+                <td>Controller #</td>
+                <td>Controller Value</td>
+              </tr>
+              <tr>
+                <td>Program Change</td>
+                <td>Cx</td>
+                <td>Program #</td>
+                <td>None</td>
+              </tr>
+              <tr>
+                <td>Channel Pressure</td>
+                <td>Dx</td>
+                <td>Pressure Value</td>
+                <td>None</td>
+              </tr>
+              <tr>
+                <td>Pitch Bend</td>
+                <td>Ex</td>
+                <td>MSB</td>
+                <td>LSB</td>
+              </tr>
+            </tbody>
+        </table>
+        </div>
+        <p>
+            Offloading synthesis from the device to a host allows digital instruments to be designed using more affordable components.
+            Although the digital instrument does not need to synthesize audio data, latency is 
+            still of primary concern. Because of this demand for low latency, the traditional MIDI pad utilizes a pressure sensitive switch
+            in order to detect events. This project's primary constraint was to match this low latency while detecting events via image processing.
+        </p>
+    <h2>Implementation</h2>
+        <p>
+            This project utilizes the Video 4 Linux 2  (V4L2) API for frame capture, the Advanced Linux Sound Architecture (ALSA) API for MIDI 
+            processing, SDL for debugging and visualizing during development, and a bare bones image processing algorithm. The V4L2 API, and 
+            underlying drivers, are a standardized interface on Linux systems for accessing video peripherals. The API provides easy access 
+            to low level components which is required for reducing latency as much as possible. Of particular interest is streaming mode. 
+            This is the term used for the part of the API that allows zero copy access to the frame buffers, which dramatically increases 
+            frame throughput and, in turn, decreases latency. 
+            <br><br>
+            While the system is operating, the SDL visualization code is deactivated in order to decrease latenecy. However, this code was
+            indispensable during development. It allowed me to see what parts of the image were being proccessed and to get an intuition
+            for things like the signal to noise ratio.
+            <br><br> 
+            ALSA is primarily used for audio applications and deals with audio playback and recording. However, it also provides support for 
+            MIDI input and output and is useful in concert with the USB drivers provided with Linux. In the Linux kernel there are specialized 
+            instances of USB device drivers, specifically designed for use with USB OTG capable devices, which are called gadgets. The MIDI 
+            gadget presents itself to the host computer as a conforming USB MIDI device and to programs running on the Raspberry Pi as a 
+            virtual sound card. Using the ALSA MIDI API, the software is able to communicate with the USB gadget which then relays the 
+            message to the host computer.
+            </p>
+    <h2>Change Detection</h2>
+        <p>
+            The event detection algorithm is very simple. It iterates over each frame buffer, compares the current pixel value to a 
+            previously saved pixel value, and if the current pixel is brighter than the saved value, it takes note. If a change of 
+            significant magnitude is detected, an event is triggered. As simple as this algorithm is, there are still a few 
+            implementation considerations. First, the format of the frame buffer must be communicated with the V4l2 driver. 
+            In this case YUV 4:2:0 was chosen because it has the luminance values for each pixel packed into the front of the buffer.
+            This is perfect for our application since we don't care about color information. The sequential nature of the luminance 
+            values also helps improve our execution time. The second consideration is, at what value should the cutoff for an event 
+            be placed. In a perfect environment with a perfect camera this would be an easy answer. However, digital cameras are noisy
+             and this presents a problem. In order to make the system as sensitive as possible while reducing the chance of a false 
+             positive, a noise mask was introduced. Before user input, the device copies the contents from a frame buffer and saves it 
+             as a reference. It then cycles through frames, comparing each pixel value to the reference plus the value in the noise mask. 
+             If the new frame causes an event to trigger, the value at that index in the noise mask is incremented. This is done until a 
+             certain threshold of activate to inactive pixels is met. During operation time, the software keeps a count of activated pixels 
+             for each pass through the frame. Each time it finds an activated pixel it increments and each time it finds an inactive pixel 
+             it decrements(unless it is already at zero). If the count of activated pixels exceeds a certain threshold, an event is triggered
+              and the corresponding MIDI data is sent. This method only fires if a certain count of activated pixels are smashed together, 
+              which avoids false positives because noise is almost never contiguous. This system is able to achieve an average latency of just 12ms.
+        </p>
+    <h2>Limitations</h2>
+        <p>
+            The main choke point of this design is the maximum frame rate of the camera, which is 90 frames per second. 90 frames per second keeps
+             us in the range of acceptable latency. However, it does not leave much time for further processing. For this reason, and given that 
+             latency is of the utmost importance, the image processing in this design was kept to the bare minimum. Ideally, if I was able to 
+             increase the frame rate, I could spare more time for blob tracking and velocity calculations, which would easily allow for pads 
+             of different depths to be created whereas the current implmentation is limited to the horizontal. In order to get the maximum 90
+             frames per second from Raspberry Pi NoIr camera used in this project, I had to severely reduce the field of view and cut the buffer to 640 x 480.
+             Documentation mentions a 1280x720 90 frames per second mode, however, I could not get V4L2 to recognize this mode.
+        </p>
+    <h2>Hardware</h2>
+        <p>
+            The system is running on a Raspberry Pi Zero W and NoIr camera. An array of ifrared LEDs are used to light the active area.
+            This is done in an effort to reduce the impact of the ambient lighting situtaion without having the area visibly brighter than 
+            the surroundings.
+            Everything is harnessed in a 3d printed shell.
+        </p>
+    <h2>Conclusion</h2>
+        <p>
+            This project indicates that a fully fledged vision based MIDI drum solution should be possible. By utilizing more advanced change detection
+            algorithms, and by using slighthly more powerful hardware, this technique could allow for a system which is controlled by drumsticks while also
+            being compact enough for use in a studio apartment. 
+        </p>
+</app-runway>

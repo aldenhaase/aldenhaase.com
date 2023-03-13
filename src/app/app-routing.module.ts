@@ -6,6 +6,7 @@ import { LystrComponent } from './lystr/lystr.component';
 import { MapComponent } from './map/map.component';
 import { ResumeComponent } from './resume/resume.component';
 import { AboutComponent } from './about/about.component';
+import { DrumsComponent } from './drums/drums.component';
 
 
 const routes: Routes = [
@@ -15,7 +16,7 @@ const routes: Routes = [
   {path:'map', component: MapComponent},
   {path:'resume', component: ResumeComponent},
   {path:'about', component: AboutComponent},
-
+  {path:'drums', component: DrumsComponent},
 ];
 
 

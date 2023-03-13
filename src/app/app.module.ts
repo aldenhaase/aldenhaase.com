@@ -13,6 +13,7 @@ import { NavComponent } from './nav/nav.component';
 import { RunwayComponent } from './runway/runway.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { DrumsComponent } from './drums/drums.component';
 
 
 @NgModule({
@@ -25,7 +26,8 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
     ResumeComponent,
     AboutComponent,
     NavComponent,
-    RunwayComponent
+    RunwayComponent,
+    DrumsComponent
   ],
   imports: [
     BrowserModule,
