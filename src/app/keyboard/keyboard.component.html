@@ -120,6 +120,7 @@
   <h2>Retrospective</h2>
   <p>If I were to do this project again, there are a few major changes I would make</p>
   <p>Firstly, I would not use 0402 components. They are just too small to handle and I had plenty of room to use a larger package. Here is a picture of the resistors next to some Morton salt crystals. In order to work with these components I needed to use a USB microscope in order to place them.</p>
+  <img src="assets/keyboard/assembly/resistor_salt.jpg">
   <p>Secondly, I would change which GPIO pins the shift registers are connected to. It is important to note that consecutive GPIO pins are not necessarily connected to consecutive memory locations. Because of this, when data is read from the shift registers it takes three operations. A bit mask is used to check each bit independently. A much more elegant solution would be to use GPIO pins which are connected to consecutive memory so that a single bit mask could be used to read all three shift registers at once.</p>
   <div class="gif">
     <video autoplay loop muted playsinline src="assets/keyboard/gif/illuminatingKB.mp4" alt="video of keyboard illuminating" class="gif"></video>
